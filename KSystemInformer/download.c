@@ -92,7 +92,7 @@ NTSTATUS KphpDownloadBinary(
     PADDRINFOEXW remoteAddress;
     PVOID requestBuffer;
     ULONG requestLength;
-    SOCKADDR_IN localAddress;
+    SOCKADDR_IN localAddress{0};
     KPH_SOCKET_HANDLE socket;
     KPH_TLS_HANDLE tls;
 
@@ -155,7 +155,7 @@ NTSTATUS KphpDownloadBinary(
 
     RtlZeroMemory(&hints, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
-    hints.ai_socktype = IPPROTO_TCP;
+    hints.ai_protocol = IPPROTO_TCP;
     hints.ai_family = AF_INET;
 
     status = KphGetAddressInfo(&hostName,
@@ -192,7 +192,7 @@ NTSTATUS KphpDownloadBinary(
                       GENERAL,
                       "KphHttpBuildRequest failed: %!STATUS!",
                       status);
-
+         KphFreePaged(requestBuffer); // Free the allocated memory
         goto Exit;
     }
 
